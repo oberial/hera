@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>购物车</title>
+    <style>
+        .active {
+            background-color: #ddd;
+        }
+    </style>
+</head>
+<body>
+    <script src='vue.js'></script>
+    <div id='app' >
+        <h2 >{{title}}</h2>
+
+        <label>course</label>
+        <input v-model='course.title' @keydown.enter='sumbit'></input>
+        <input v-model='course.price'></input>
+        <button @click='sumbit'>提交</button>
+        <!-- :class="{active: selectedCourse===c}"    -->
+
+        <p v-if='courses.length===0'>没有任何课程信息</p>
+        <div class="courselist" v-else='courses.length===0' >
+            <div v-for='c in courses' :key='c' 
+            :style="{backgroundColor : (selectedCourse===c ? '#ddd' : 'transparent')}"
+            @click='selectedCourse = c'> 
+            {{c.title}}
+            {{c.price}}
+            </div>
+        </div>
+
+        <p >课程总数:
+            <!-- 表达式 -->
+            <!-- {{courses.length}} -->
+            <!-- 计算属性 computed 属性变化  主动刷新，如果值 -->
+            
+            <!-- {{total}} -->
+            <!-- 监听器wacth  监听属性 变化刷新-->
+            {{totalCount}}
+        </p>
+    </div>
+    <script>
+        const app=new Vue({
+            el:'#app',
+            // function
+            data: function(){
+                return {
+                    title: '购物车',
+                    course: {title:'',price:0},
+                    selectedCourse:'',
+                    courses:[{title:'javascript',price:1},{title:'vue框架学习',price:2}],
+                    totalCount:0
+                    // {title:'javascript',price:1},{title:'vue框架学习',price:2}
+                }
+            },
+            // data写法//es6
+            // data() {
+            //     return {
+            //         title: '购物车',
+            //         course: {title:'',price:0},
+            //         courses:[{title:'javascript',price:1},{title:'vue框架学习',price:2}]
+            //     }
+            // },
+            // data写法//属性
+            // data:{
+            //     title: '购物车',
+            //     course: {title:'',price:0},
+            //     courses:[{title:'javascript',price:1},{title:'vue框架学习',price:2}]
+            // },
+            methods: {
+                sumbit() {
+                    this.courses.push({title:this.course.title,price:this.course.price});
+                    this.course={title:'',price:0};
+                }
+            },
+            computed: {
+                total() {
+                    return this.courses.length; 
+                }
+            },
+            // // 初始化不执行
+            // watch: {
+            //     courses(newValue, oldValue) {
+            //         this.totalCount=newValue.length;
+            //     }
+            // },
+            watch: {
+                courses: {
+                    immediate: true,
+                    deep: true,
+                    handler(newValue, oldValue) {
+                        this.totalCount=newValue.length;
+                    }
+                }
+            },
+        })
+
+        setTimeout(()=>{
+            console.log(app);
+            console.log(app.$options.render);
+        },5000);
+    </script>
+</body>
+</html>

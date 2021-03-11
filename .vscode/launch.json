@@ -5,14 +5,10 @@
     "version": "0.2.0",
     "configurations": [
         {
-<<<<<<< HEAD
             "type": "chrome",
-=======
-            "type": "pwa-chrome",
->>>>>>> 92c82fec02e4d4112e4849b26c81c05006c9c322
             "request": "launch",
             "name": "Launch Chrome against localhost",
-            "url": "http://localhost:8080",
+            "url": "http://localhost:8080/src/cart.html",
             "webRoot": "${workspaceFolder}"
         }
     ]

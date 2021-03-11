@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>购物车</title>
+    <style>
+        .active {
+            background-color: #ddd;
+        }
+    </style>
+</head>
+<body>
+    <script src='../vue.js'></script>
+    <div id='app' >
+    </div>
+    <script>
+        const app=new Vue({
+            el:'#app',
+            // function
+            data: function(){
+                return {
+                    title: '购物车',
+                    course: {title:'',price:0},
+                    selectedCourse:'',
+                    courses:[]
+                }
+            },
+            methods: {
+                sumbit() {
+                    this.courses.push({title:this.course.title,price:this.course.price});
+                    this.course={title:'',price:0};
+                }
+            },
+            render() {
+                with(this){
+                    return _c('div',{attrs:{"id":"app"}},[_c('h2',[_v(_s(title))]),_v(" "),_c('label',[_v("course")]),_v(" "),_c('input',{directives:[{name:"model",rawName:"v-model",value:(course.title),expression:"course.title"}],domProps:{"value":(course.title)},on:{"keydown":function($event){if(!$event.type.indexOf('key')&&_k($event.keyCode,"enter",13,$event.key,"Enter"))return null;return sumbit($event)},"input":function($event){if($event.target.composing)return;$set(course, "title", $event.target.value)}}}),_v(" "),_c('input',{directives:[{name:"model",rawName:"v-model",value:(course.price),expression:"course.price"}],domProps:{"value":(course.price)},on:{"input":function($event){if($event.target.composing)return;$set(course, "price", $event.target.value)}}}),_v(" "),_c('button',{on:{"click":sumbit}},[_v("提交")]),_v(" "),(courses.length===0)?_c('p',[_v("没有任何课程信息")]):_c('div',{staticClass:"courselist"},_l((courses),function(c){return _c('div',{key:c,style:({backgroundColor : (selectedCourse===c ? '#ddd' : 'transparent')}),on:{"click":function($event){selectedCourse = c}}},[_v(" \n            "+_s(c.title)+"\n            "+_s(c.price)+"\n            ")])}),0)])
+                }
+            }
+        })
+    </script>
+</body>
+</html>
