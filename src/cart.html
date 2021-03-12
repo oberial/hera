@@ -43,6 +43,17 @@
         </p>
     </div>
     <script>
+        function getCourses(){
+            return new Promise(reslove=>{
+                alert("jj"+Object.getPrototypeOf(this));
+                setTimeout(()=>{
+                    alert('异步调用回调准备调用');
+                    reslove([{title:'web全栈',price:1},{title:'web前端',price:2}])
+                    alert('异步调用回调准备调用结束');
+                },10000);
+                alert("jj"+Object.getPrototypeOf(this));
+            })
+        }
         const app=new Vue({
             el:'#app',
             // function
@@ -51,10 +62,19 @@
                     title: '购物车',
                     course: {title:'',price:0},
                     selectedCourse:'',
-                    courses:[{title:'javascript',price:1},{title:'vue框架学习',price:2}],
+                    courses:[],
                     totalCount:0
                     // {title:'javascript',price:1},{title:'vue框架学习',price:2}
                 }
+            },
+            mounted () {
+                alert('调用getCourses');
+                getCourses().then((obj)=>{
+                    alert('真实回调方法触发'+obj);
+                    setTimeout(()=>{this.courses=obj},5000);
+                    alert('真实回调方法执行完毕'+obj);
+                });
+                alert('调用getCourses结束');
             },
             // data写法//es6
             // data() {
