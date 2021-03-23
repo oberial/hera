@@ -1,10 +1,11 @@
 <template>
-    <div v-for="item in items" :key="item.id">
+
+    <div v-for="item in items" :key="item.id" >
         {{ item }}
     </div>
 </template>
-
 <script>
+
     export default {
         data() {
             return {

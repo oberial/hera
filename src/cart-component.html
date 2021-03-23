@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>购物车</title>
+    <style>
+        .active {
+            background-color: #ddd;
+        }
+
+        .message-box {
+            padding:10px 20px;
+            background-color:green
+        }
+        .message-box-close{
+            float:right;
+        }
+    </style>
+</head>
+<body>
+    <script src='vue.js'></script>
+    <div id='app'>
+        <!-- <message :show.sync='show'  >
+            <template v-slot:title="slotProps">
+                <h3>{{slotProps.title}}</h3>
+            </template>
+   
+            <template>{{message}}</template>
+
+        </message> -->
+        <message  ref="msg" >
+            <template v-slot:title="slotProps">
+                <h3>{{slotProps.title}}</h3>
+            </template>
+   
+            <template>{{message}}</template>
+
+        </message>
+
+        <h2>{{title}}</h2>
+        <course-add @sumbit-add-submt='sumbitAddSubmt'></course-add>
+        <!-- <course-add :value='course' @input='course=$event' @sumbit-add-submt='sumbitAddSubmt'></course-add> -->
+        <!-- :class="{active: selectedCourse===c}"    -->
+        <course-list  :courses='courses'></course-list>
+        <p>课程总数:
+            <!-- 表达式 -->
+            <!-- {{courses.length}} -->
+            <!-- 计算属性 computed 属性变化  主动刷新，如果值 -->
+            <!-- {{total}} -->
+            <!-- 监听器wacth  监听属性 变化刷新-->
+            {{totalCount}}
+        </p>
+    </div>
+    <script>
+
+        Vue.component('message',{
+            // props:['show'],
+            data() {
+                return {
+                    show:false
+                }
+            },
+            template: `
+            <div class='message-box' v-if='show' >
+
+                <slot name='title' title="作用域插槽">默认标题</slot>
+                <!--具名插槽-->
+                <slot name='title2' >默认标题</slot>
+                <slot></slot>
+            <span class='message-box-close' @click='toggele'>X</span>    
+            </div>`,
+            // @click="$emit('update:show',false)
+            methods:{
+                toggele(){
+                    this.show=!this.show;
+                }
+            }
+        })
+
+        //课程新增组件
+        Vue.component('course-add', {
+            data() {
+                return {
+                    course: { title: '',price: 0 },
+                }
+            },
+            template: `
+            <div>
+                <label>course</label>
+                <input v-model='course.title' @keydown.enter='sumbit'
+                ></input>
+                <input v-model='course.price' ref="inp"></input>
+                <button @click='sumbit'>提交</button>
+                </div>
+            `,
+            methods:{
+                sumbit(){
+                    this.$emit('sumbit-add-submt',this.course);
+                    this.course = { title: '', price: 0 };
+                }
+            },
+            mounted() {
+                this.$refs.inp.focus();
+            }
+        })
+
+        //列表组件
+        Vue.component('course-list', {
+            data() {
+                return {
+                    selectedCourse: '',
+                }
+            },
+            props: {
+                courses: {
+                    type: Array,
+                    default: []
+                }
+            },
+            template: `
+            <div>
+                <p v-if='courses.length===0'>没有任何课程信息</p>
+                <div class="courselist" v-else='courses.length===0'>
+                    <div v-for='c in courses' :key='c'
+                        :style="{backgroundColor : (selectedCourse===c ? '#ddd' : 'transparent')}" @click='selectedCourse = c'>
+                        {{c.title}}
+                        {{c.price}}
+                    </div>
+                </div>
+            </div>
+            `
+        })
+
+        function getCourses() {
+            return new Promise(reslove => {
+                // alert("jj" + Object.getPrototypeOf(this));2
+                setTimeout(() => {
+                    // alert('异步调用回调准备调用');5
+                    reslove([{ title: 'web全栈', price: 1 }, { title: 'web前端', price: 2 }])
+                    // alert('异步调用回调准备调用结束');6
+                }, 10000);
+                // alert("jj" + Object.getPrototypeOf(this));3
+            })
+        }
+
+        const app = new Vue({
+            el: '#app',
+            // function
+            data: function () {
+                return {
+                    title: '购物车',
+                    courses: [],
+                    totalCount: 0,
+                    // show:false,
+                    message:'新增成功',
+                    messagetitle:"恭喜恭喜"
+                    // {title:'javascript',price:1},{title:'vue框架学习',price:2}
+                }
+            },
+            mounted() {
+                // alert('调用getCourses');1
+                getCourses().then((obj) => {
+                    // alert('真实回调方法触发' + obj);7
+                    setTimeout(() => { alert(JSON.stringify(obj),this.courses = obj );}, 5000);
+                    // alert('真实回调方法执行完毕' + obj);8
+                });
+                // alert('调用getCourses结束');4
+            },
+            // data写法//es6
+            // data() {
+            //     return {
+            //         title: '购物车',
+            //         course: {title:'',price:0},
+            //         courses:[{title:'javascript',price:1},{title:'vue框架学习',price:2}]
+            //     }
+            // },
+            // data写法//属性
+            // data:{
+            //     title: '购物车',
+            //     course: {title:'',price:0},
+            //     courses:[{title:'javascript',price:1},{title:'vue框架学习',price:2}]
+            // },
+            methods: {
+                sumbitAddSubmt(cource) {
+                    // this.show=true;
+                    this.$refs.msg.toggele();
+                    this.courses.push({ title: cource.title, price: cource.price });
+                }
+            },
+            computed: {
+                total() {
+                    return this.courses.length;
+                }
+            },
+            // // 初始化不执行
+            // watch: {
+            //     courses(newValue, oldValue) {
+            //         this.totalCount=newValue.length;
+            //     }
+            // },
+            watch: {
+                courses: {
+                    immediate: true,
+                    deep: true,
+                    handler(newValue, oldValue) {
+                        this.totalCount = newValue.length;
+                    }
+                }
+            },
+        })
+
+        setTimeout(() => {
+            console.log(app);
+            console.log(app.$options.render);
+        }, 5000);
+    </script>
+</body>
+
+</html>
